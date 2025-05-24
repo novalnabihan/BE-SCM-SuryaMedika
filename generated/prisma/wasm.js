@@ -120,26 +120,89 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.PostScalarFieldEnum = {
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
+  fullName: 'fullName',
+  username: 'username',
+  email: 'email',
+  phone: 'phone',
+  role: 'role',
+  password: 'password',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  title: 'title',
-  content: 'content',
-  published: 'published',
-  authorId: 'authorId'
+  deletedAt: 'deletedAt'
 };
 
-exports.Prisma.ProfileScalarFieldEnum = {
+exports.Prisma.WarehouseScalarFieldEnum = {
   id: 'id',
-  bio: 'bio',
+  name: 'name',
+  address: 'address',
+  type: 'type',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ItemScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  currentPrice: 'currentPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ItemStockScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  warehouseId: 'warehouseId',
+  stockQty: 'stockQty',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ItemPriceHistoryScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  price: 'price',
+  changedAt: 'changedAt',
   userId: 'userId'
 };
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.InvoiceScalarFieldEnum = {
   id: 'id',
-  email: 'email',
-  name: 'name'
+  invoiceCode: 'invoiceCode',
+  transactionDate: 'transactionDate',
+  paymentStatus: 'paymentStatus',
+  buyer: 'buyer',
+  paymentMethod: 'paymentMethod',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  invoiceId: 'invoiceId',
+  itemId: 'itemId',
+  warehouseId: 'warehouseId',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  isPurchase: 'isPurchase',
+  subtotal: 'subtotal',
+  createdById: 'createdById',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.StockFlowScalarFieldEnum = {
+  id: 'id',
+  itemId: 'itemId',
+  warehouseId: 'warehouseId',
+  transactionId: 'transactionId',
+  direction: 'direction',
+  qty: 'qty',
+  unitCost: 'unitCost',
+  remainingQty: 'remainingQty',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -156,12 +219,30 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+exports.Role = exports.$Enums.Role = {
+  manajer: 'manajer',
+  karyawan: 'karyawan'
+};
 
+exports.WarehouseType = exports.$Enums.WarehouseType = {
+  gudang: 'gudang',
+  konsinyasi: 'konsinyasi'
+};
+
+exports.StockDirection = exports.$Enums.StockDirection = {
+  in: 'in',
+  out: 'out'
+};
 
 exports.Prisma.ModelName = {
-  Post: 'Post',
-  Profile: 'Profile',
-  User: 'User'
+  User: 'User',
+  Warehouse: 'Warehouse',
+  Item: 'Item',
+  ItemStock: 'ItemStock',
+  ItemPriceHistory: 'ItemPriceHistory',
+  Invoice: 'Invoice',
+  Transaction: 'Transaction',
+  StockFlow: 'StockFlow'
 };
 
 /**

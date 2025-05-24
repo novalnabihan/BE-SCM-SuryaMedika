@@ -48,7 +48,7 @@ router.put('/users/:id', async (req, res) => {
   } catch (err) {
     console.error('Gagal update user:', err);
     res.status(500).json({ message: 'Server error' });
-  }
+  } 
 });
 
 router.delete('/users/:id', async (req, res) => {
