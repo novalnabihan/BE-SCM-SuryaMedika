@@ -4,13 +4,17 @@ const pool = require('./../db');
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
 const now = new Date();
+const verifyToken = require('../middlewares/verifyToken');
 
+
+router.use(verifyToken);
 
 // GET semua user
 router.get('/users', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM "User" ORDER BY "createdAt" DESC');
     res.json(result.rows);
+    console.log("User dari token:", req.user);
   } catch (err) {
     console.error('Error fetching users:', err);
     res.status(500).json({ message: 'Internal server error' });
