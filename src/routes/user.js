@@ -2,12 +2,19 @@ const express = require('express');
 const router = express.Router();
 const pool = require('./../db');
 const bcrypt = require('bcryptjs');
+const { v4: uuidv4 } = require('uuid');
+const now = new Date();
+const verifyToken = require('../middlewares/verifyToken');
+
+
+router.use(verifyToken);
 
 // GET semua user
 router.get('/users', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC');
+    const result = await pool.query('SELECT * FROM "User" ORDER BY "createdAt" DESC');
     res.json(result.rows);
+    console.log("User dari token:", req.user);
   } catch (err) {
     console.error('Error fetching users:', err);
     res.status(500).json({ message: 'Internal server error' });
@@ -16,33 +23,43 @@ router.get('/users', async (req, res) => {
 
 // POST user baru
 router.post('/users', async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role, fullName, phone } = req.body;
 
-  if (!username || !email || !role || !password) {
+  if (!username || !email || !role || !password || !fullName || !phone) {
     return res.status(400).json({ message: "Semua field wajib diisi!" });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const id = uuidv4();
     const result = await pool.query(
-      'INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *',
-      [username, email, hashedPassword, role]
+      `INSERT INTO "User" (id, username, email, password, role, "fullName", phone, "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+      [id, username, email, hashedPassword, role, fullName, phone, now, now]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error('Gagal menambahkan user:', err);
+    console.error('Gagal menambahkan user:', err.message, err.stack);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
+
 router.put('/users/:id', async (req, res) => {
   const { username, email, role } = req.body;
   const id = req.params.id;
+  const now = new Date();
 
   try {
     const result = await pool.query(
-      'UPDATE users SET username=$1, email=$2, role=$3 WHERE id=$4 RETURNING *',
-      [username, email, role, id]
+      `UPDATE "User"
+       SET username = $1,
+           email = $2,
+           role = $3,
+           "updatedAt" = $4
+       WHERE id = $5
+       RETURNING *`,
+      [username, email, role, now, id]
     );
     res.json(result.rows[0]);
   } catch (err) {
@@ -51,11 +68,13 @@ router.put('/users/:id', async (req, res) => {
   }
 });
 
+
 router.delete('/users/:id', async (req, res) => {
   const id = req.params.id;
+  const now = new Date()
 
   try {
-    await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    await pool.query(`UPDATE "User" SET "deletedAt" = $1 WHERE id = $2`, [now, id]);
     res.status(204).send(); // sukses tanpa isi
   } catch (err) {
     console.error('Gagal hapus user:', err);

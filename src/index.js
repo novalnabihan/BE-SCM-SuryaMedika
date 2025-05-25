@@ -13,6 +13,9 @@ app.use('/api', authRoutes);
 const userRoutes = require('./routes/user');
 app.use('/api', userRoutes);
 
+const warehouseRoutes = require('./routes/gudang');
+app.use('/api', warehouseRoutes);
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

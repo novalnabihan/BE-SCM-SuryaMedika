@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
   try {
     // Ambil user dari database berdasarkan username/email
     const result = await pool.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $1',
+      'SELECT * FROM "User" WHERE username = $1 OR email = $1',
       [username]
     );
 
