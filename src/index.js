@@ -16,6 +16,12 @@ app.use('/api', userRoutes);
 const warehouseRoutes = require('./routes/gudang');
 app.use('/api', warehouseRoutes);
 
+
+const itemRoutes = require('./routes/item');
+app.use(express.json());
+app.use('/api', itemRoutes);
+
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
