@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -79,8 +78,8 @@ model ItemPriceHistory {
   itemId     String
   price      Float
   changedAt  DateTime  @default(now())
-  changedBy  User      @relation("UserPriceChanges", fields: [userId], references: [id])
-  userId     String
+  changedById  String   
+  changedBy  User      @relation("UserPriceChanges", fields: [changedById], references: [id])
 }
 
 model Invoice {
@@ -113,6 +112,9 @@ model Transaction {
   createdById   String
   createdAt     DateTime  @default(now())
 
+  vendor     Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId   String
+
   stockFlows    StockFlow[]
 }
 
@@ -130,6 +132,14 @@ model StockFlow {
   remainingQty  Int
   createdAt     DateTime  @default(now())
 }
+
+model Vendor {
+  id    String @id @default(uuid())
+  name  String
+
+  transactions Transaction[]
+}
+
 
 enum Role {
   manajer

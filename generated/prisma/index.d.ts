@@ -53,6 +53,11 @@ export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
  * 
  */
 export type StockFlow = $Result.DefaultSelection<Prisma.$StockFlowPayload>
+/**
+ * Model Vendor
+ * 
+ */
+export type Vendor = $Result.DefaultSelection<Prisma.$VendorPayload>
 
 /**
  * Enums
@@ -299,6 +304,16 @@ export class PrismaClient<
     * ```
     */
   get stockFlow(): Prisma.StockFlowDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.vendor`: Exposes CRUD operations for the **Vendor** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Vendors
+    * const vendors = await prisma.vendor.findMany()
+    * ```
+    */
+  get vendor(): Prisma.VendorDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -746,7 +761,8 @@ export namespace Prisma {
     ItemPriceHistory: 'ItemPriceHistory',
     Invoice: 'Invoice',
     Transaction: 'Transaction',
-    StockFlow: 'StockFlow'
+    StockFlow: 'StockFlow',
+    Vendor: 'Vendor'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -765,7 +781,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "warehouse" | "item" | "itemStock" | "itemPriceHistory" | "invoice" | "transaction" | "stockFlow"
+      modelProps: "user" | "warehouse" | "item" | "itemStock" | "itemPriceHistory" | "invoice" | "transaction" | "stockFlow" | "vendor"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1361,6 +1377,80 @@ export namespace Prisma {
           }
         }
       }
+      Vendor: {
+        payload: Prisma.$VendorPayload<ExtArgs>
+        fields: Prisma.VendorFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VendorFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VendorFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          findFirst: {
+            args: Prisma.VendorFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VendorFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          findMany: {
+            args: Prisma.VendorFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>[]
+          }
+          create: {
+            args: Prisma.VendorCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          createMany: {
+            args: Prisma.VendorCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VendorCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>[]
+          }
+          delete: {
+            args: Prisma.VendorDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          update: {
+            args: Prisma.VendorUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          deleteMany: {
+            args: Prisma.VendorDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VendorUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.VendorUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>[]
+          }
+          upsert: {
+            args: Prisma.VendorUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VendorPayload>
+          }
+          aggregate: {
+            args: Prisma.VendorAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVendor>
+          }
+          groupBy: {
+            args: Prisma.VendorGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VendorGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VendorCountArgs<ExtArgs>
+            result: $Utils.Optional<VendorCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1453,6 +1543,7 @@ export namespace Prisma {
     invoice?: InvoiceOmit
     transaction?: TransactionOmit
     stockFlow?: StockFlowOmit
+    vendor?: VendorOmit
   }
 
   /* Types for Logging */
@@ -1757,6 +1848,37 @@ export namespace Prisma {
    */
   export type TransactionCountOutputTypeCountStockFlowsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StockFlowWhereInput
+  }
+
+
+  /**
+   * Count Type VendorCountOutputType
+   */
+
+  export type VendorCountOutputType = {
+    transactions: number
+  }
+
+  export type VendorCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | VendorCountOutputTypeCountTransactionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * VendorCountOutputType without action
+   */
+  export type VendorCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VendorCountOutputType
+     */
+    select?: VendorCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * VendorCountOutputType without action
+   */
+  export type VendorCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransactionWhereInput
   }
 
 
@@ -8683,6 +8805,7 @@ export namespace Prisma {
     subtotal: number | null
     createdById: string | null
     createdAt: Date | null
+    vendorId: string | null
   }
 
   export type TransactionMaxAggregateOutputType = {
@@ -8696,6 +8819,7 @@ export namespace Prisma {
     subtotal: number | null
     createdById: string | null
     createdAt: Date | null
+    vendorId: string | null
   }
 
   export type TransactionCountAggregateOutputType = {
@@ -8709,6 +8833,7 @@ export namespace Prisma {
     subtotal: number
     createdById: number
     createdAt: number
+    vendorId: number
     _all: number
   }
 
@@ -8736,6 +8861,7 @@ export namespace Prisma {
     subtotal?: true
     createdById?: true
     createdAt?: true
+    vendorId?: true
   }
 
   export type TransactionMaxAggregateInputType = {
@@ -8749,6 +8875,7 @@ export namespace Prisma {
     subtotal?: true
     createdById?: true
     createdAt?: true
+    vendorId?: true
   }
 
   export type TransactionCountAggregateInputType = {
@@ -8762,6 +8889,7 @@ export namespace Prisma {
     subtotal?: true
     createdById?: true
     createdAt?: true
+    vendorId?: true
     _all?: true
   }
 
@@ -8862,6 +8990,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt: Date
+    vendorId: string
     _count: TransactionCountAggregateOutputType | null
     _avg: TransactionAvgAggregateOutputType | null
     _sum: TransactionSumAggregateOutputType | null
@@ -8894,10 +9023,12 @@ export namespace Prisma {
     subtotal?: boolean
     createdById?: boolean
     createdAt?: boolean
+    vendorId?: boolean
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
     stockFlows?: boolean | Transaction$stockFlowsArgs<ExtArgs>
     _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
@@ -8913,10 +9044,12 @@ export namespace Prisma {
     subtotal?: boolean
     createdById?: boolean
     createdAt?: boolean
+    vendorId?: boolean
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8930,10 +9063,12 @@ export namespace Prisma {
     subtotal?: boolean
     createdById?: boolean
     createdAt?: boolean
+    vendorId?: boolean
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectScalar = {
@@ -8947,14 +9082,16 @@ export namespace Prisma {
     subtotal?: boolean
     createdById?: boolean
     createdAt?: boolean
+    vendorId?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceId" | "itemId" | "warehouseId" | "quantity" | "unitPrice" | "isPurchase" | "subtotal" | "createdById" | "createdAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceId" | "itemId" | "warehouseId" | "quantity" | "unitPrice" | "isPurchase" | "subtotal" | "createdById" | "createdAt" | "vendorId", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
     stockFlows?: boolean | Transaction$stockFlowsArgs<ExtArgs>
     _count?: boolean | TransactionCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -8963,12 +9100,14 @@ export namespace Prisma {
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
   }
   export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     item?: boolean | ItemDefaultArgs<ExtArgs>
     warehouse?: boolean | WarehouseDefaultArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    vendor?: boolean | VendorDefaultArgs<ExtArgs>
   }
 
   export type $TransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8978,6 +9117,7 @@ export namespace Prisma {
       item: Prisma.$ItemPayload<ExtArgs>
       warehouse: Prisma.$WarehousePayload<ExtArgs>
       createdBy: Prisma.$UserPayload<ExtArgs>
+      vendor: Prisma.$VendorPayload<ExtArgs>
       stockFlows: Prisma.$StockFlowPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -8991,6 +9131,7 @@ export namespace Prisma {
       subtotal: number
       createdById: string
       createdAt: Date
+      vendorId: string
     }, ExtArgs["result"]["transaction"]>
     composites: {}
   }
@@ -9389,6 +9530,7 @@ export namespace Prisma {
     item<T extends ItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ItemDefaultArgs<ExtArgs>>): Prisma__ItemClient<$Result.GetResult<Prisma.$ItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     warehouse<T extends WarehouseDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WarehouseDefaultArgs<ExtArgs>>): Prisma__WarehouseClient<$Result.GetResult<Prisma.$WarehousePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    vendor<T extends VendorDefaultArgs<ExtArgs> = {}>(args?: Subset<T, VendorDefaultArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     stockFlows<T extends Transaction$stockFlowsArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$stockFlowsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StockFlowPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9429,6 +9571,7 @@ export namespace Prisma {
     readonly subtotal: FieldRef<"Transaction", 'Float'>
     readonly createdById: FieldRef<"Transaction", 'String'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
+    readonly vendorId: FieldRef<"Transaction", 'String'>
   }
     
 
@@ -11036,6 +11179,1037 @@ export namespace Prisma {
 
 
   /**
+   * Model Vendor
+   */
+
+  export type AggregateVendor = {
+    _count: VendorCountAggregateOutputType | null
+    _min: VendorMinAggregateOutputType | null
+    _max: VendorMaxAggregateOutputType | null
+  }
+
+  export type VendorMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+  }
+
+  export type VendorMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+  }
+
+  export type VendorCountAggregateOutputType = {
+    id: number
+    name: number
+    _all: number
+  }
+
+
+  export type VendorMinAggregateInputType = {
+    id?: true
+    name?: true
+  }
+
+  export type VendorMaxAggregateInputType = {
+    id?: true
+    name?: true
+  }
+
+  export type VendorCountAggregateInputType = {
+    id?: true
+    name?: true
+    _all?: true
+  }
+
+  export type VendorAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Vendor to aggregate.
+     */
+    where?: VendorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vendors to fetch.
+     */
+    orderBy?: VendorOrderByWithRelationInput | VendorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VendorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Vendors
+    **/
+    _count?: true | VendorCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VendorMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VendorMaxAggregateInputType
+  }
+
+  export type GetVendorAggregateType<T extends VendorAggregateArgs> = {
+        [P in keyof T & keyof AggregateVendor]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVendor[P]>
+      : GetScalarType<T[P], AggregateVendor[P]>
+  }
+
+
+
+
+  export type VendorGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VendorWhereInput
+    orderBy?: VendorOrderByWithAggregationInput | VendorOrderByWithAggregationInput[]
+    by: VendorScalarFieldEnum[] | VendorScalarFieldEnum
+    having?: VendorScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VendorCountAggregateInputType | true
+    _min?: VendorMinAggregateInputType
+    _max?: VendorMaxAggregateInputType
+  }
+
+  export type VendorGroupByOutputType = {
+    id: string
+    name: string
+    _count: VendorCountAggregateOutputType | null
+    _min: VendorMinAggregateOutputType | null
+    _max: VendorMaxAggregateOutputType | null
+  }
+
+  type GetVendorGroupByPayload<T extends VendorGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VendorGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VendorGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VendorGroupByOutputType[P]>
+            : GetScalarType<T[P], VendorGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VendorSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    transactions?: boolean | Vendor$transactionsArgs<ExtArgs>
+    _count?: boolean | VendorCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["vendor"]>
+
+  export type VendorSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+  }, ExtArgs["result"]["vendor"]>
+
+  export type VendorSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+  }, ExtArgs["result"]["vendor"]>
+
+  export type VendorSelectScalar = {
+    id?: boolean
+    name?: boolean
+  }
+
+  export type VendorOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name", ExtArgs["result"]["vendor"]>
+  export type VendorInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transactions?: boolean | Vendor$transactionsArgs<ExtArgs>
+    _count?: boolean | VendorCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type VendorIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type VendorIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $VendorPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Vendor"
+    objects: {
+      transactions: Prisma.$TransactionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+    }, ExtArgs["result"]["vendor"]>
+    composites: {}
+  }
+
+  type VendorGetPayload<S extends boolean | null | undefined | VendorDefaultArgs> = $Result.GetResult<Prisma.$VendorPayload, S>
+
+  type VendorCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<VendorFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: VendorCountAggregateInputType | true
+    }
+
+  export interface VendorDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Vendor'], meta: { name: 'Vendor' } }
+    /**
+     * Find zero or one Vendor that matches the filter.
+     * @param {VendorFindUniqueArgs} args - Arguments to find a Vendor
+     * @example
+     * // Get one Vendor
+     * const vendor = await prisma.vendor.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VendorFindUniqueArgs>(args: SelectSubset<T, VendorFindUniqueArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Vendor that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {VendorFindUniqueOrThrowArgs} args - Arguments to find a Vendor
+     * @example
+     * // Get one Vendor
+     * const vendor = await prisma.vendor.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VendorFindUniqueOrThrowArgs>(args: SelectSubset<T, VendorFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Vendor that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorFindFirstArgs} args - Arguments to find a Vendor
+     * @example
+     * // Get one Vendor
+     * const vendor = await prisma.vendor.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VendorFindFirstArgs>(args?: SelectSubset<T, VendorFindFirstArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Vendor that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorFindFirstOrThrowArgs} args - Arguments to find a Vendor
+     * @example
+     * // Get one Vendor
+     * const vendor = await prisma.vendor.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VendorFindFirstOrThrowArgs>(args?: SelectSubset<T, VendorFindFirstOrThrowArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Vendors that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Vendors
+     * const vendors = await prisma.vendor.findMany()
+     * 
+     * // Get first 10 Vendors
+     * const vendors = await prisma.vendor.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const vendorWithIdOnly = await prisma.vendor.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VendorFindManyArgs>(args?: SelectSubset<T, VendorFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Vendor.
+     * @param {VendorCreateArgs} args - Arguments to create a Vendor.
+     * @example
+     * // Create one Vendor
+     * const Vendor = await prisma.vendor.create({
+     *   data: {
+     *     // ... data to create a Vendor
+     *   }
+     * })
+     * 
+     */
+    create<T extends VendorCreateArgs>(args: SelectSubset<T, VendorCreateArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Vendors.
+     * @param {VendorCreateManyArgs} args - Arguments to create many Vendors.
+     * @example
+     * // Create many Vendors
+     * const vendor = await prisma.vendor.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VendorCreateManyArgs>(args?: SelectSubset<T, VendorCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Vendors and returns the data saved in the database.
+     * @param {VendorCreateManyAndReturnArgs} args - Arguments to create many Vendors.
+     * @example
+     * // Create many Vendors
+     * const vendor = await prisma.vendor.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Vendors and only return the `id`
+     * const vendorWithIdOnly = await prisma.vendor.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VendorCreateManyAndReturnArgs>(args?: SelectSubset<T, VendorCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Vendor.
+     * @param {VendorDeleteArgs} args - Arguments to delete one Vendor.
+     * @example
+     * // Delete one Vendor
+     * const Vendor = await prisma.vendor.delete({
+     *   where: {
+     *     // ... filter to delete one Vendor
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VendorDeleteArgs>(args: SelectSubset<T, VendorDeleteArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Vendor.
+     * @param {VendorUpdateArgs} args - Arguments to update one Vendor.
+     * @example
+     * // Update one Vendor
+     * const vendor = await prisma.vendor.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VendorUpdateArgs>(args: SelectSubset<T, VendorUpdateArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Vendors.
+     * @param {VendorDeleteManyArgs} args - Arguments to filter Vendors to delete.
+     * @example
+     * // Delete a few Vendors
+     * const { count } = await prisma.vendor.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VendorDeleteManyArgs>(args?: SelectSubset<T, VendorDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Vendors
+     * const vendor = await prisma.vendor.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VendorUpdateManyArgs>(args: SelectSubset<T, VendorUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Vendors and returns the data updated in the database.
+     * @param {VendorUpdateManyAndReturnArgs} args - Arguments to update many Vendors.
+     * @example
+     * // Update many Vendors
+     * const vendor = await prisma.vendor.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Vendors and only return the `id`
+     * const vendorWithIdOnly = await prisma.vendor.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends VendorUpdateManyAndReturnArgs>(args: SelectSubset<T, VendorUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Vendor.
+     * @param {VendorUpsertArgs} args - Arguments to update or create a Vendor.
+     * @example
+     * // Update or create a Vendor
+     * const vendor = await prisma.vendor.upsert({
+     *   create: {
+     *     // ... data to create a Vendor
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Vendor we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VendorUpsertArgs>(args: SelectSubset<T, VendorUpsertArgs<ExtArgs>>): Prisma__VendorClient<$Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Vendors.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorCountArgs} args - Arguments to filter Vendors to count.
+     * @example
+     * // Count the number of Vendors
+     * const count = await prisma.vendor.count({
+     *   where: {
+     *     // ... the filter for the Vendors we want to count
+     *   }
+     * })
+    **/
+    count<T extends VendorCountArgs>(
+      args?: Subset<T, VendorCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VendorCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Vendor.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VendorAggregateArgs>(args: Subset<T, VendorAggregateArgs>): Prisma.PrismaPromise<GetVendorAggregateType<T>>
+
+    /**
+     * Group by Vendor.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VendorGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VendorGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VendorGroupByArgs['orderBy'] }
+        : { orderBy?: VendorGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VendorGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVendorGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Vendor model
+   */
+  readonly fields: VendorFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Vendor.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VendorClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transactions<T extends Vendor$transactionsArgs<ExtArgs> = {}>(args?: Subset<T, Vendor$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Vendor model
+   */
+  interface VendorFieldRefs {
+    readonly id: FieldRef<"Vendor", 'String'>
+    readonly name: FieldRef<"Vendor", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Vendor findUnique
+   */
+  export type VendorFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter, which Vendor to fetch.
+     */
+    where: VendorWhereUniqueInput
+  }
+
+  /**
+   * Vendor findUniqueOrThrow
+   */
+  export type VendorFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter, which Vendor to fetch.
+     */
+    where: VendorWhereUniqueInput
+  }
+
+  /**
+   * Vendor findFirst
+   */
+  export type VendorFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter, which Vendor to fetch.
+     */
+    where?: VendorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vendors to fetch.
+     */
+    orderBy?: VendorOrderByWithRelationInput | VendorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Vendors.
+     */
+    cursor?: VendorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Vendors.
+     */
+    distinct?: VendorScalarFieldEnum | VendorScalarFieldEnum[]
+  }
+
+  /**
+   * Vendor findFirstOrThrow
+   */
+  export type VendorFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter, which Vendor to fetch.
+     */
+    where?: VendorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vendors to fetch.
+     */
+    orderBy?: VendorOrderByWithRelationInput | VendorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Vendors.
+     */
+    cursor?: VendorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vendors.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Vendors.
+     */
+    distinct?: VendorScalarFieldEnum | VendorScalarFieldEnum[]
+  }
+
+  /**
+   * Vendor findMany
+   */
+  export type VendorFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter, which Vendors to fetch.
+     */
+    where?: VendorWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Vendors to fetch.
+     */
+    orderBy?: VendorOrderByWithRelationInput | VendorOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Vendors.
+     */
+    cursor?: VendorWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Vendors from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Vendors.
+     */
+    skip?: number
+    distinct?: VendorScalarFieldEnum | VendorScalarFieldEnum[]
+  }
+
+  /**
+   * Vendor create
+   */
+  export type VendorCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Vendor.
+     */
+    data: XOR<VendorCreateInput, VendorUncheckedCreateInput>
+  }
+
+  /**
+   * Vendor createMany
+   */
+  export type VendorCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Vendors.
+     */
+    data: VendorCreateManyInput | VendorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Vendor createManyAndReturn
+   */
+  export type VendorCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * The data used to create many Vendors.
+     */
+    data: VendorCreateManyInput | VendorCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Vendor update
+   */
+  export type VendorUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Vendor.
+     */
+    data: XOR<VendorUpdateInput, VendorUncheckedUpdateInput>
+    /**
+     * Choose, which Vendor to update.
+     */
+    where: VendorWhereUniqueInput
+  }
+
+  /**
+   * Vendor updateMany
+   */
+  export type VendorUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Vendors.
+     */
+    data: XOR<VendorUpdateManyMutationInput, VendorUncheckedUpdateManyInput>
+    /**
+     * Filter which Vendors to update
+     */
+    where?: VendorWhereInput
+    /**
+     * Limit how many Vendors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Vendor updateManyAndReturn
+   */
+  export type VendorUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * The data used to update Vendors.
+     */
+    data: XOR<VendorUpdateManyMutationInput, VendorUncheckedUpdateManyInput>
+    /**
+     * Filter which Vendors to update
+     */
+    where?: VendorWhereInput
+    /**
+     * Limit how many Vendors to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Vendor upsert
+   */
+  export type VendorUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Vendor to update in case it exists.
+     */
+    where: VendorWhereUniqueInput
+    /**
+     * In case the Vendor found by the `where` argument doesn't exist, create a new Vendor with this data.
+     */
+    create: XOR<VendorCreateInput, VendorUncheckedCreateInput>
+    /**
+     * In case the Vendor was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VendorUpdateInput, VendorUncheckedUpdateInput>
+  }
+
+  /**
+   * Vendor delete
+   */
+  export type VendorDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+    /**
+     * Filter which Vendor to delete.
+     */
+    where: VendorWhereUniqueInput
+  }
+
+  /**
+   * Vendor deleteMany
+   */
+  export type VendorDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Vendors to delete
+     */
+    where?: VendorWhereInput
+    /**
+     * Limit how many Vendors to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Vendor.transactions
+   */
+  export type Vendor$transactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+    orderBy?: TransactionOrderByWithRelationInput | TransactionOrderByWithRelationInput[]
+    cursor?: TransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransactionScalarFieldEnum | TransactionScalarFieldEnum[]
+  }
+
+  /**
+   * Vendor without action
+   */
+  export type VendorDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vendor
+     */
+    select?: VendorSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vendor
+     */
+    omit?: VendorOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VendorInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11137,7 +12311,8 @@ export namespace Prisma {
     isPurchase: 'isPurchase',
     subtotal: 'subtotal',
     createdById: 'createdById',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    vendorId: 'vendorId'
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -11156,6 +12331,14 @@ export namespace Prisma {
   };
 
   export type StockFlowScalarFieldEnum = (typeof StockFlowScalarFieldEnum)[keyof typeof StockFlowScalarFieldEnum]
+
+
+  export const VendorScalarFieldEnum: {
+    id: 'id',
+    name: 'name'
+  };
+
+  export type VendorScalarFieldEnum = (typeof VendorScalarFieldEnum)[keyof typeof VendorScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11736,10 +12919,12 @@ export namespace Prisma {
     subtotal?: FloatFilter<"Transaction"> | number
     createdById?: StringFilter<"Transaction"> | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
+    vendorId?: StringFilter<"Transaction"> | string
     invoice?: XOR<InvoiceScalarRelationFilter, InvoiceWhereInput>
     item?: XOR<ItemScalarRelationFilter, ItemWhereInput>
     warehouse?: XOR<WarehouseScalarRelationFilter, WarehouseWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    vendor?: XOR<VendorScalarRelationFilter, VendorWhereInput>
     stockFlows?: StockFlowListRelationFilter
   }
 
@@ -11754,10 +12939,12 @@ export namespace Prisma {
     subtotal?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
+    vendorId?: SortOrder
     invoice?: InvoiceOrderByWithRelationInput
     item?: ItemOrderByWithRelationInput
     warehouse?: WarehouseOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
+    vendor?: VendorOrderByWithRelationInput
     stockFlows?: StockFlowOrderByRelationAggregateInput
   }
 
@@ -11775,10 +12962,12 @@ export namespace Prisma {
     subtotal?: FloatFilter<"Transaction"> | number
     createdById?: StringFilter<"Transaction"> | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
+    vendorId?: StringFilter<"Transaction"> | string
     invoice?: XOR<InvoiceScalarRelationFilter, InvoiceWhereInput>
     item?: XOR<ItemScalarRelationFilter, ItemWhereInput>
     warehouse?: XOR<WarehouseScalarRelationFilter, WarehouseWhereInput>
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    vendor?: XOR<VendorScalarRelationFilter, VendorWhereInput>
     stockFlows?: StockFlowListRelationFilter
   }, "id">
 
@@ -11793,6 +12982,7 @@ export namespace Prisma {
     subtotal?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
+    vendorId?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
     _avg?: TransactionAvgOrderByAggregateInput
     _max?: TransactionMaxOrderByAggregateInput
@@ -11814,6 +13004,7 @@ export namespace Prisma {
     subtotal?: FloatWithAggregatesFilter<"Transaction"> | number
     createdById?: StringWithAggregatesFilter<"Transaction"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+    vendorId?: StringWithAggregatesFilter<"Transaction"> | string
   }
 
   export type StockFlowWhereInput = {
@@ -11897,6 +13088,46 @@ export namespace Prisma {
     unitCost?: FloatWithAggregatesFilter<"StockFlow"> | number
     remainingQty?: IntWithAggregatesFilter<"StockFlow"> | number
     createdAt?: DateTimeWithAggregatesFilter<"StockFlow"> | Date | string
+  }
+
+  export type VendorWhereInput = {
+    AND?: VendorWhereInput | VendorWhereInput[]
+    OR?: VendorWhereInput[]
+    NOT?: VendorWhereInput | VendorWhereInput[]
+    id?: StringFilter<"Vendor"> | string
+    name?: StringFilter<"Vendor"> | string
+    transactions?: TransactionListRelationFilter
+  }
+
+  export type VendorOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    transactions?: TransactionOrderByRelationAggregateInput
+  }
+
+  export type VendorWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: VendorWhereInput | VendorWhereInput[]
+    OR?: VendorWhereInput[]
+    NOT?: VendorWhereInput | VendorWhereInput[]
+    name?: StringFilter<"Vendor"> | string
+    transactions?: TransactionListRelationFilter
+  }, "id">
+
+  export type VendorOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    _count?: VendorCountOrderByAggregateInput
+    _max?: VendorMaxOrderByAggregateInput
+    _min?: VendorMinOrderByAggregateInput
+  }
+
+  export type VendorScalarWhereWithAggregatesInput = {
+    AND?: VendorScalarWhereWithAggregatesInput | VendorScalarWhereWithAggregatesInput[]
+    OR?: VendorScalarWhereWithAggregatesInput[]
+    NOT?: VendorScalarWhereWithAggregatesInput | VendorScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Vendor"> | string
+    name?: StringWithAggregatesFilter<"Vendor"> | string
   }
 
   export type UserCreateInput = {
@@ -12369,6 +13600,7 @@ export namespace Prisma {
     item: ItemCreateNestedOneWithoutTransactionsInput
     warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
     createdBy: UserCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
     stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
   }
 
@@ -12383,6 +13615,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
     stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
   }
 
@@ -12397,6 +13630,7 @@ export namespace Prisma {
     item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
     warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
     stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
   }
 
@@ -12411,6 +13645,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
     stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
@@ -12425,6 +13660,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type TransactionUpdateManyMutationInput = {
@@ -12447,6 +13683,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StockFlowCreateInput = {
@@ -12528,6 +13765,45 @@ export namespace Prisma {
     unitCost?: FloatFieldUpdateOperationsInput | number
     remainingQty?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VendorCreateInput = {
+    id?: string
+    name: string
+    transactions?: TransactionCreateNestedManyWithoutVendorInput
+  }
+
+  export type VendorUncheckedCreateInput = {
+    id?: string
+    name: string
+    transactions?: TransactionUncheckedCreateNestedManyWithoutVendorInput
+  }
+
+  export type VendorUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    transactions?: TransactionUpdateManyWithoutVendorNestedInput
+  }
+
+  export type VendorUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    transactions?: TransactionUncheckedUpdateManyWithoutVendorNestedInput
+  }
+
+  export type VendorCreateManyInput = {
+    id?: string
+    name: string
+  }
+
+  export type VendorUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type VendorUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -13031,6 +14307,11 @@ export namespace Prisma {
     isNot?: InvoiceWhereInput
   }
 
+  export type VendorScalarRelationFilter = {
+    is?: VendorWhereInput
+    isNot?: VendorWhereInput
+  }
+
   export type TransactionCountOrderByAggregateInput = {
     id?: SortOrder
     invoiceId?: SortOrder
@@ -13042,6 +14323,7 @@ export namespace Prisma {
     subtotal?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type TransactionAvgOrderByAggregateInput = {
@@ -13061,6 +14343,7 @@ export namespace Prisma {
     subtotal?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type TransactionMinOrderByAggregateInput = {
@@ -13074,6 +14357,7 @@ export namespace Prisma {
     subtotal?: SortOrder
     createdById?: SortOrder
     createdAt?: SortOrder
+    vendorId?: SortOrder
   }
 
   export type TransactionSumOrderByAggregateInput = {
@@ -13150,6 +14434,21 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStockDirectionFilter<$PrismaModel>
     _max?: NestedEnumStockDirectionFilter<$PrismaModel>
+  }
+
+  export type VendorCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+  }
+
+  export type VendorMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+  }
+
+  export type VendorMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
   }
 
   export type InvoiceCreateNestedManyWithoutCreatedByInput = {
@@ -13752,6 +15051,12 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type VendorCreateNestedOneWithoutTransactionsInput = {
+    create?: XOR<VendorCreateWithoutTransactionsInput, VendorUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: VendorCreateOrConnectWithoutTransactionsInput
+    connect?: VendorWhereUniqueInput
+  }
+
   export type StockFlowCreateNestedManyWithoutTransactionInput = {
     create?: XOR<StockFlowCreateWithoutTransactionInput, StockFlowUncheckedCreateWithoutTransactionInput> | StockFlowCreateWithoutTransactionInput[] | StockFlowUncheckedCreateWithoutTransactionInput[]
     connectOrCreate?: StockFlowCreateOrConnectWithoutTransactionInput | StockFlowCreateOrConnectWithoutTransactionInput[]
@@ -13796,6 +15101,14 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutTransactionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransactionsInput, UserUpdateWithoutTransactionsInput>, UserUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type VendorUpdateOneRequiredWithoutTransactionsNestedInput = {
+    create?: XOR<VendorCreateWithoutTransactionsInput, VendorUncheckedCreateWithoutTransactionsInput>
+    connectOrCreate?: VendorCreateOrConnectWithoutTransactionsInput
+    upsert?: VendorUpsertWithoutTransactionsInput
+    connect?: VendorWhereUniqueInput
+    update?: XOR<XOR<VendorUpdateToOneWithWhereWithoutTransactionsInput, VendorUpdateWithoutTransactionsInput>, VendorUncheckedUpdateWithoutTransactionsInput>
   }
 
   export type StockFlowUpdateManyWithoutTransactionNestedInput = {
@@ -13870,6 +15183,48 @@ export namespace Prisma {
     upsert?: TransactionUpsertWithoutStockFlowsInput
     connect?: TransactionWhereUniqueInput
     update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutStockFlowsInput, TransactionUpdateWithoutStockFlowsInput>, TransactionUncheckedUpdateWithoutStockFlowsInput>
+  }
+
+  export type TransactionCreateNestedManyWithoutVendorInput = {
+    create?: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput> | TransactionCreateWithoutVendorInput[] | TransactionUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutVendorInput | TransactionCreateOrConnectWithoutVendorInput[]
+    createMany?: TransactionCreateManyVendorInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionUncheckedCreateNestedManyWithoutVendorInput = {
+    create?: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput> | TransactionCreateWithoutVendorInput[] | TransactionUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutVendorInput | TransactionCreateOrConnectWithoutVendorInput[]
+    createMany?: TransactionCreateManyVendorInputEnvelope
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+  }
+
+  export type TransactionUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput> | TransactionCreateWithoutVendorInput[] | TransactionUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutVendorInput | TransactionCreateOrConnectWithoutVendorInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutVendorInput | TransactionUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: TransactionCreateManyVendorInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutVendorInput | TransactionUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutVendorInput | TransactionUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutVendorNestedInput = {
+    create?: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput> | TransactionCreateWithoutVendorInput[] | TransactionUncheckedCreateWithoutVendorInput[]
+    connectOrCreate?: TransactionCreateOrConnectWithoutVendorInput | TransactionCreateOrConnectWithoutVendorInput[]
+    upsert?: TransactionUpsertWithWhereUniqueWithoutVendorInput | TransactionUpsertWithWhereUniqueWithoutVendorInput[]
+    createMany?: TransactionCreateManyVendorInputEnvelope
+    set?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    disconnect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    delete?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    connect?: TransactionWhereUniqueInput | TransactionWhereUniqueInput[]
+    update?: TransactionUpdateWithWhereUniqueWithoutVendorInput | TransactionUpdateWithWhereUniqueWithoutVendorInput[]
+    updateMany?: TransactionUpdateManyWithWhereWithoutVendorInput | TransactionUpdateManyWithWhereWithoutVendorInput[]
+    deleteMany?: TransactionScalarWhereInput | TransactionScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -14155,6 +15510,7 @@ export namespace Prisma {
     invoice: InvoiceCreateNestedOneWithoutTransactionsInput
     item: ItemCreateNestedOneWithoutTransactionsInput
     warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
     stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
   }
 
@@ -14168,6 +15524,7 @@ export namespace Prisma {
     isPurchase: boolean
     subtotal: number
     createdAt?: Date | string
+    vendorId: string
     stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
   }
 
@@ -14265,6 +15622,7 @@ export namespace Prisma {
     subtotal?: FloatFilter<"Transaction"> | number
     createdById?: StringFilter<"Transaction"> | string
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
+    vendorId?: StringFilter<"Transaction"> | string
   }
 
   export type ItemPriceHistoryUpsertWithWhereUniqueWithoutChangedByInput = {
@@ -14330,6 +15688,7 @@ export namespace Prisma {
     invoice: InvoiceCreateNestedOneWithoutTransactionsInput
     item: ItemCreateNestedOneWithoutTransactionsInput
     createdBy: UserCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
     stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
   }
 
@@ -14343,6 +15702,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
     stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
   }
 
@@ -14523,6 +15883,7 @@ export namespace Prisma {
     invoice: InvoiceCreateNestedOneWithoutTransactionsInput
     warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
     createdBy: UserCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
     stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
   }
 
@@ -14536,6 +15897,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
     stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
   }
 
@@ -14958,6 +16320,7 @@ export namespace Prisma {
     item: ItemCreateNestedOneWithoutTransactionsInput
     warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
     createdBy: UserCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
     stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
   }
 
@@ -14971,6 +16334,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
     stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
   }
 
@@ -15161,6 +16525,21 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutTransactionsInput, UserUncheckedCreateWithoutTransactionsInput>
   }
 
+  export type VendorCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+  }
+
+  export type VendorUncheckedCreateWithoutTransactionsInput = {
+    id?: string
+    name: string
+  }
+
+  export type VendorCreateOrConnectWithoutTransactionsInput = {
+    where: VendorWhereUniqueInput
+    create: XOR<VendorCreateWithoutTransactionsInput, VendorUncheckedCreateWithoutTransactionsInput>
+  }
+
   export type StockFlowCreateWithoutTransactionInput = {
     id?: string
     direction: $Enums.StockDirection
@@ -15337,6 +16716,27 @@ export namespace Prisma {
     priceHistories?: ItemPriceHistoryUncheckedUpdateManyWithoutChangedByNestedInput
   }
 
+  export type VendorUpsertWithoutTransactionsInput = {
+    update: XOR<VendorUpdateWithoutTransactionsInput, VendorUncheckedUpdateWithoutTransactionsInput>
+    create: XOR<VendorCreateWithoutTransactionsInput, VendorUncheckedCreateWithoutTransactionsInput>
+    where?: VendorWhereInput
+  }
+
+  export type VendorUpdateToOneWithWhereWithoutTransactionsInput = {
+    where?: VendorWhereInput
+    data: XOR<VendorUpdateWithoutTransactionsInput, VendorUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type VendorUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type VendorUncheckedUpdateWithoutTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+  }
+
   export type StockFlowUpsertWithWhereUniqueWithoutTransactionInput = {
     where: StockFlowWhereUniqueInput
     update: XOR<StockFlowUpdateWithoutTransactionInput, StockFlowUncheckedUpdateWithoutTransactionInput>
@@ -15422,6 +16822,7 @@ export namespace Prisma {
     item: ItemCreateNestedOneWithoutTransactionsInput
     warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
     createdBy: UserCreateNestedOneWithoutTransactionsInput
+    vendor: VendorCreateNestedOneWithoutTransactionsInput
   }
 
   export type TransactionUncheckedCreateWithoutStockFlowsInput = {
@@ -15435,6 +16836,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type TransactionCreateOrConnectWithoutStockFlowsInput = {
@@ -15534,6 +16936,7 @@ export namespace Prisma {
     item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
     warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutStockFlowsInput = {
@@ -15547,6 +16950,61 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type TransactionCreateWithoutVendorInput = {
+    id?: string
+    quantity: number
+    unitPrice: number
+    isPurchase: boolean
+    subtotal: number
+    createdAt?: Date | string
+    invoice: InvoiceCreateNestedOneWithoutTransactionsInput
+    item: ItemCreateNestedOneWithoutTransactionsInput
+    warehouse: WarehouseCreateNestedOneWithoutTransactionsInput
+    createdBy: UserCreateNestedOneWithoutTransactionsInput
+    stockFlows?: StockFlowCreateNestedManyWithoutTransactionInput
+  }
+
+  export type TransactionUncheckedCreateWithoutVendorInput = {
+    id?: string
+    invoiceId: string
+    itemId: string
+    warehouseId: string
+    quantity: number
+    unitPrice: number
+    isPurchase: boolean
+    subtotal: number
+    createdById: string
+    createdAt?: Date | string
+    stockFlows?: StockFlowUncheckedCreateNestedManyWithoutTransactionInput
+  }
+
+  export type TransactionCreateOrConnectWithoutVendorInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput>
+  }
+
+  export type TransactionCreateManyVendorInputEnvelope = {
+    data: TransactionCreateManyVendorInput | TransactionCreateManyVendorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransactionUpsertWithWhereUniqueWithoutVendorInput = {
+    where: TransactionWhereUniqueInput
+    update: XOR<TransactionUpdateWithoutVendorInput, TransactionUncheckedUpdateWithoutVendorInput>
+    create: XOR<TransactionCreateWithoutVendorInput, TransactionUncheckedCreateWithoutVendorInput>
+  }
+
+  export type TransactionUpdateWithWhereUniqueWithoutVendorInput = {
+    where: TransactionWhereUniqueInput
+    data: XOR<TransactionUpdateWithoutVendorInput, TransactionUncheckedUpdateWithoutVendorInput>
+  }
+
+  export type TransactionUpdateManyWithWhereWithoutVendorInput = {
+    where: TransactionScalarWhereInput
+    data: XOR<TransactionUpdateManyMutationInput, TransactionUncheckedUpdateManyWithoutVendorInput>
   }
 
   export type InvoiceCreateManyCreatedByInput = {
@@ -15569,6 +17027,7 @@ export namespace Prisma {
     isPurchase: boolean
     subtotal: number
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type ItemPriceHistoryCreateManyChangedByInput = {
@@ -15620,6 +17079,7 @@ export namespace Prisma {
     invoice?: InvoiceUpdateOneRequiredWithoutTransactionsNestedInput
     item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
     warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
     stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15633,6 +17093,7 @@ export namespace Prisma {
     isPurchase?: BoolFieldUpdateOperationsInput | boolean
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
     stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15646,6 +17107,7 @@ export namespace Prisma {
     isPurchase?: BoolFieldUpdateOperationsInput | boolean
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type ItemPriceHistoryUpdateWithoutChangedByInput = {
@@ -15687,6 +17149,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type StockFlowCreateManyWarehouseInput = {
@@ -15734,6 +17197,7 @@ export namespace Prisma {
     invoice?: InvoiceUpdateOneRequiredWithoutTransactionsNestedInput
     item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
     stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15747,6 +17211,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
     stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15760,6 +17225,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StockFlowUpdateWithoutWarehouseInput = {
@@ -15820,6 +17286,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type StockFlowCreateManyItemInput = {
@@ -15888,6 +17355,7 @@ export namespace Prisma {
     invoice?: InvoiceUpdateOneRequiredWithoutTransactionsNestedInput
     warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
     stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15901,6 +17369,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
     stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15914,6 +17383,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StockFlowUpdateWithoutItemInput = {
@@ -15959,6 +17429,7 @@ export namespace Prisma {
     subtotal: number
     createdById: string
     createdAt?: Date | string
+    vendorId: string
   }
 
   export type TransactionUpdateWithoutInvoiceInput = {
@@ -15971,6 +17442,7 @@ export namespace Prisma {
     item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
     warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
     createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    vendor?: VendorUpdateOneRequiredWithoutTransactionsNestedInput
     stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15984,6 +17456,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
     stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
   }
 
@@ -15997,6 +17470,7 @@ export namespace Prisma {
     subtotal?: FloatFieldUpdateOperationsInput | number
     createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    vendorId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StockFlowCreateManyTransactionInput = {
@@ -16040,6 +17514,60 @@ export namespace Prisma {
     qty?: IntFieldUpdateOperationsInput | number
     unitCost?: FloatFieldUpdateOperationsInput | number
     remainingQty?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransactionCreateManyVendorInput = {
+    id?: string
+    invoiceId: string
+    itemId: string
+    warehouseId: string
+    quantity: number
+    unitPrice: number
+    isPurchase: boolean
+    subtotal: number
+    createdById: string
+    createdAt?: Date | string
+  }
+
+  export type TransactionUpdateWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    isPurchase?: BoolFieldUpdateOperationsInput | boolean
+    subtotal?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    invoice?: InvoiceUpdateOneRequiredWithoutTransactionsNestedInput
+    item?: ItemUpdateOneRequiredWithoutTransactionsNestedInput
+    warehouse?: WarehouseUpdateOneRequiredWithoutTransactionsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutTransactionsNestedInput
+    stockFlows?: StockFlowUpdateManyWithoutTransactionNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoiceId?: StringFieldUpdateOperationsInput | string
+    itemId?: StringFieldUpdateOperationsInput | string
+    warehouseId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    isPurchase?: BoolFieldUpdateOperationsInput | boolean
+    subtotal?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    stockFlows?: StockFlowUncheckedUpdateManyWithoutTransactionNestedInput
+  }
+
+  export type TransactionUncheckedUpdateManyWithoutVendorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    invoiceId?: StringFieldUpdateOperationsInput | string
+    itemId?: StringFieldUpdateOperationsInput | string
+    warehouseId?: StringFieldUpdateOperationsInput | string
+    quantity?: IntFieldUpdateOperationsInput | number
+    unitPrice?: FloatFieldUpdateOperationsInput | number
+    isPurchase?: BoolFieldUpdateOperationsInput | boolean
+    subtotal?: FloatFieldUpdateOperationsInput | number
+    createdById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

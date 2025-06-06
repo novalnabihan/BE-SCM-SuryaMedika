@@ -190,7 +190,8 @@ exports.Prisma.TransactionScalarFieldEnum = {
   isPurchase: 'isPurchase',
   subtotal: 'subtotal',
   createdById: 'createdById',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  vendorId: 'vendorId'
 };
 
 exports.Prisma.StockFlowScalarFieldEnum = {
@@ -203,6 +204,11 @@ exports.Prisma.StockFlowScalarFieldEnum = {
   unitCost: 'unitCost',
   remainingQty: 'remainingQty',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.VendorScalarFieldEnum = {
+  id: 'id',
+  name: 'name'
 };
 
 exports.Prisma.SortOrder = {
@@ -242,7 +248,8 @@ exports.Prisma.ModelName = {
   ItemPriceHistory: 'ItemPriceHistory',
   Invoice: 'Invoice',
   Transaction: 'Transaction',
-  StockFlow: 'StockFlow'
+  StockFlow: 'StockFlow',
+  Vendor: 'Vendor'
 };
 
 /**

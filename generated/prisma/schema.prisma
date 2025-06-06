@@ -113,6 +113,9 @@ model Transaction {
   createdById String
   createdAt   DateTime  @default(now())
 
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId String
+
   stockFlows StockFlow[]
 }
 
@@ -129,6 +132,13 @@ model StockFlow {
   unitCost      Float
   remainingQty  Int
   createdAt     DateTime       @default(now())
+}
+
+model Vendor {
+  id   String @id @default(uuid())
+  name String
+
+  transactions Transaction[]
 }
 
 enum Role {
