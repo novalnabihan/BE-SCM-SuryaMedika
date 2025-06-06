@@ -1,15 +1,176 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('./../db');
+const prisma = require('../prisma');
 
-// Ambil semua data dari tabel item
+// ✅ Ambil semua item (yang belum dihapus)
 router.get('/items', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "Item" ORDER BY "createdAt" DESC');
-    res.json(result.rows);
+    const items = await prisma.item.findMany({
+      where: { deletedAt: null },
+      orderBy: { createdAt: 'desc' }
+    });
+    res.json(items);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Gagal mengambil data item' });
+  }
+});
+
+router.get('/item-stock/:itemId', async (req, res) => {
+  const { itemId } = req.params;
+
+  try {
+    const result = await prisma.itemStock.aggregate({
+      where: { itemId },
+      _sum: { stockQty: true }
+    });
+
+    const total = result._sum.stockQty || 0;
+    res.json({ total });
   } catch (err) {
-    console.error('Gagal mengambil data item:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error(err);
+    res.status(500).json({ message: 'Gagal menghitung stok' });
+  }
+});
+
+// Tambahkan setelah endpoint POST /items
+router.get('/items/:id/detail', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const item = await prisma.item.findUnique({
+      where: { id, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        currentPrice: true,
+        itemStocks: {
+          where: { warehouse: { deletedAt: null } },
+          include: {
+            warehouse: {
+              select: { name: true, address: true }
+            }
+          }
+        },
+        priceHistories: {
+          orderBy: { changedAt: 'desc' },
+          include: {
+            changedBy: {
+              select: { fullName: true }
+            }
+          }
+        }
+      }
+    });
+
+    if (!item) return res.status(404).json({ message: 'Item tidak ditemukan' });
+
+    const totalStock = item.itemStocks.reduce((acc, stock) => acc + stock.stockQty, 0);
+    const distributions = item.itemStocks.map(stock => ({
+      warehouse: stock.warehouse.name,
+      address: stock.warehouse.address,
+      quantity: stock.stockQty
+    }));
+
+    const histories = item.priceHistories.map(history => ({
+      price: history.price,
+      changedAt: history.changedAt,
+      changedBy: history.changedBy.fullName
+    }));
+
+    res.json({
+      id: item.id,
+      name: item.name,
+      currentPrice: item.currentPrice,
+      totalStock,
+      distributions,
+      histories
+    });
+  } catch (err) {
+    console.error('Gagal ambil detail item:', err.message);
+    res.status(500).json({ message: 'Terjadi kesalahan pada server' });
+  }
+});
+
+
+// ✅ Tambah item baru (tanpa stok)
+router.post('/items', async (req, res) => {
+  try {
+    const { name, currentPrice } = req.body;
+
+    const item = await prisma.item.create({
+      data: {
+        name,
+        currentPrice
+      }
+    });
+
+    res.status(201).json(item);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Gagal membuat item' });
+  }
+});
+
+// ✅ Ubah harga jual item & catat histori
+router.post('/items/:id/update-price', async (req, res) => {
+  const { id } = req.params;
+  const { price } = req.body;
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!price || isNaN(price)) {
+    return res.status(400).json({ message: 'Harga tidak valid' });
+  }
+
+  try {
+    // Ambil user dari token
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const changedById = decoded.changedById; // 🟢 benar, bukan decoded.userId
+
+
+    console.log('[DEBUG] Token:', token);
+    console.log('[DEBUG] Decoded JWT:', decoded);
+
+    const userId = decoded.userId;
+
+    // Update item
+    const updatedItem = await prisma.item.update({
+      where: { id },
+      data: { currentPrice: price }
+    });
+
+    // Catat histori perubahan harga
+    await prisma.itemPriceHistory.create({
+      data: {
+        itemId: id,
+        price,
+        changedById
+      }
+    });
+
+    res.json({ message: 'Harga berhasil diperbarui', item: updatedItem });
+  } catch (err) {
+    console.error('Gagal update harga item:', err.message);
+    res.status(500).json({ message: 'Terjadi kesalahan saat update harga' });
+  }
+});
+
+
+// DELETE item by ID (soft delete)
+router.delete('/items/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const item = await prisma.item.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+
+    res.json({ message: 'Item berhasil dihapus', item });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Gagal menghapus item' });
   }
 });
 
