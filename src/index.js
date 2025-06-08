@@ -17,7 +17,7 @@ const warehouseRoutes = require('./routes/gudang');
 app.use('/api', warehouseRoutes);
 
 const transactionRoutes = require('./routes/transaksi');
-app.use('/api/transactions', transactionRoutes);
+app.use('/api', transactionRoutes);
 
 const itemRoutes = require('./routes/item');
 app.use('/api', itemRoutes);
