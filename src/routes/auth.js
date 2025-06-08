@@ -1,11 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const pool = require('./../db');  // koneksi ke DB
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const pool = require("./../db"); // koneksi ke DB
 
 // Login route
-router.post('/login', async (req, res) => {
+router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
   // 🧪 Log input dari frontend
@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
 
     if (result.rows.length === 0) {
       console.log("User not found");
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     const user = result.rows[0];
@@ -38,28 +38,27 @@ router.post('/login', async (req, res) => {
     console.log("Password match:", isMatch);
 
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
     // Buat token
     const token = jwt.sign(
-        { id: user.id, username: user.username, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      );
+      { changedById: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
-    res.json({ message: 'Login successful', token });
+    res.json({ message: "Login successful", token });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
 // Logout route (dummy untuk hapus token di sisi client)
-router.post('/logout', (req, res) => {
+router.post("/logout", (req, res) => {
   // Tidak perlu hapus session karena pakai JWT, cukup kirim response sukses
-  res.status(200).json({ message: 'Logout successful' });
+  res.status(200).json({ message: "Logout successful" });
 });
-
 
 module.exports = router;
