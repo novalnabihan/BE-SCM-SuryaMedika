@@ -10,7 +10,7 @@ const { id } = require('date-fns/locale');
 const verifyToken = require('../middlewares/verifyToken');
 
 
-const generateInvoiceCode = () => `INV-${ulid()}`;
+const generateInvoiceCode = () => `INV-${ulid().slice(0,8)}`;
 
 const getOrCreateVendorId = async (vendorName) => {
   const existing = await prisma.vendor.findFirst({ where: { name: vendorName } });
@@ -135,6 +135,7 @@ router.get("/transaksi", async (req, res) => {
       quantity: trx.quantity,
       unitPrice: trx.unitPrice,
       subtotal: trx.subtotal,
+      partner: trx.isPurchase ? trx.vendor?.name : trx.invoice.buyer,
       warehouse: trx.warehouse.name,
       operator: trx.createdBy.fullName,
       isPurchase: trx.isPurchase,
@@ -338,6 +339,41 @@ router.get('/transaksi/monthly-by-type', verifyToken, async (req, res) => {
   } catch (err) {
     console.error('Error ambil data bulanan pembelian/penjualan:', err);
     res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT: Update payment method & status
+router.put("/transaksi/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { paymentMethod, paymentStatus } = req.body;
+
+  if (!paymentMethod || typeof paymentStatus === "undefined") {
+    return res.status(400).json({ message: "paymentMethod dan paymentStatus wajib diisi" });
+  }
+
+  try {
+    const updated = await prisma.transaction.update({
+      where: { id },
+      data: {
+        invoice: {
+          update: {
+            paymentMethod,
+            paymentStatus,
+          },
+        },
+      },
+      include: {
+        invoice: true,
+      },
+    });
+
+    res.json({
+      message: "Transaksi berhasil diperbarui",
+      data: updated,
+    });
+  } catch (err) {
+    console.error("Gagal update transaksi:", err.message);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

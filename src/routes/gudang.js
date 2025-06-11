@@ -3,11 +3,10 @@ const router = express.Router();
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { v4: uuidv4 } = require("uuid");
-const verifyToken = require('../middlewares/verifyToken');
+const verifyToken = require("../middlewares/verifyToken");
 
-
-// GET semua gudang (dengan pencarian opsional)
-router.get("/warehouses", async (req, res) => {
+// GET semua gudang (dengan pencarian opsional dan total stok)
+router.get("/warehouses", verifyToken, async (req, res) => {
   const q = req.query.q?.toLowerCase() || "";
 
   try {
@@ -19,21 +18,31 @@ router.get("/warehouses", async (req, res) => {
           mode: "insensitive",
         },
       },
+      include: {
+        itemStocks: true, // ambil relasi stok per gudang
+      },
       orderBy: {
         createdAt: "desc",
       },
-      select: {
-        id: true,
-        name: true,
-      },
     });
 
-    res.json(warehouses);
+    const result = warehouses.map((w) => ({
+      id: w.id,
+      name: w.name,
+      address: w.address,
+      type: w.type,
+      createdAt: w.createdAt,
+      updatedAt: w.updatedAt,
+      totalStock: w.itemStocks.reduce((sum, s) => sum + s.stockQty, 0),
+    }));
+
+    return res.json(result);
   } catch (err) {
-    console.error("Error fetching warehouses:", err);
-    res.status(500).json({ message: "Internal server error" });
+    console.error("❌ Error ambil gudang:", err);
+    return res.status(500).json({ message: "Gagal mengambil data gudang" });
   }
 });
+
 
 // GET satu gudang berdasarkan ID
 router.get("/warehouses/:id", async (req, res) => {
@@ -65,8 +74,7 @@ router.get("/warehouses/:id", async (req, res) => {
 });
 
 // GET ringkasan total stok, modal, dan value gudang
-// GET ringkasan total stok, modal, dan value gudang
-router.get('/warehouses/:id/summary', async (req, res) => {
+router.get("/warehouses/:id/summary", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -104,11 +112,10 @@ router.get('/warehouses/:id/summary', async (req, res) => {
       totalValue,
     });
   } catch (err) {
-    console.error('Gagal hitung summary gudang:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Gagal hitung summary gudang:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
 
 // ✅ GET transaksi berdasarkan warehouseId (fix field dan relasi)
 router.get("/warehouses/:id/transactions", async (req, res) => {
@@ -150,7 +157,6 @@ router.get("/warehouses/:id/transactions", async (req, res) => {
       unitPrice: trx.unitPrice,
       subtotal: trx.subtotal,
       isPurchase: trx.isPurchase, // Ambil langsung dari trx
-      partner: trx.isPurchase ? trx.vendor?.name : trx.invoice.buyer,
       paymentMethod: trx.invoice.paymentMethod,
       paymentStatus: trx.invoice.paymentStatus,
       operator: trx.invoice.createdBy.fullName,
@@ -163,7 +169,7 @@ router.get("/warehouses/:id/transactions", async (req, res) => {
   }
 });
 
-router.get('/warehouses/summary/global', async (req, res) => {
+router.get("/warehouses/summary/global", async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany({
       include: {
@@ -172,7 +178,7 @@ router.get('/warehouses/summary/global', async (req, res) => {
     });
 
     const stockData = await prisma.itemStock.findMany({
-      include: { item: true }
+      include: { item: true },
     });
 
     let totalStok = 0;
@@ -192,35 +198,40 @@ router.get('/warehouses/summary/global', async (req, res) => {
 
     res.json({ totalStok, totalModal, totalValue });
   } catch (err) {
-    console.error('Gagal ambil summary global:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Gagal ambil summary global:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
+router.get(
+  "/warehouses/summary/per-warehouse",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const warehouses = await prisma.warehouse.findMany({
+        where: { deletedAt: null },
+        include: {
+          itemStocks: true,
+        },
+      });
 
-router.get('/warehouses/summary/per-warehouse', verifyToken, async (req, res) => {
-  try {
-    const warehouses = await prisma.warehouse.findMany({
-      where: { deletedAt: null },
-      include: {
-        itemStocks: true,
-      },
-    });
+      const result = warehouses.map((w) => ({
+        name: w.name,
+        totalStock: w.itemStocks.reduce(
+          (sum, stock) => sum + stock.stockQty,
+          0
+        ),
+      }));
 
-    const result = warehouses.map((w) => ({
-      name: w.name,
-      totalStock: w.itemStocks.reduce((sum, stock) => sum + stock.stockQty, 0),
-    }));
-
-    res.json(result);
-  } catch (error) {
-    console.error('Error fetching stok per warehouse:', error);
-    res.status(500).json({ message: 'Internal server error' });
+      res.json(result);
+    } catch (error) {
+      console.error("Error fetching stok per warehouse:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
-});
+);
 
 module.exports = router;
-
 
 // POST gudang baru
 router.post("/warehouses", verifyToken, async (req, res) => {
@@ -267,6 +278,39 @@ router.delete("/warehouses/:id", async (req, res) => {
     res.status(200).json({ message: "Gudang berhasil dihapus" });
   } catch (err) {
     console.error("Gagal hapus gudang:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT (edit) gudang
+router.put("/warehouses/:id", verifyToken, async (req, res) => {
+  const { id } = req.params;
+  const { name, address, type } = req.body;
+
+  if (!name || !address || !type) {
+    return res.status(400).json({ message: "Semua field wajib diisi!" });
+  }
+
+  try {
+    const updated = await prisma.warehouse.update({
+      where: { id },
+      data: {
+        name,
+        address,
+        type,
+        updatedAt: new Date(),
+      },
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        type: true,
+      },
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("Gagal update gudang:", err.message);
     res.status(500).json({ message: "Server error" });
   }
 });
