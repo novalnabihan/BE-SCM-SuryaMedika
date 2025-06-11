@@ -22,6 +22,9 @@ app.use('/api', transactionRoutes);
 const itemRoutes = require('./routes/item');
 app.use('/api', itemRoutes);
 
+const invoicesRoutes = require('./routes/invoice');
+app.use('/api', invoicesRoutes)
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
