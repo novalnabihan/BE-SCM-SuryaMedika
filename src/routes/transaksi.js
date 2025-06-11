@@ -126,23 +126,23 @@ router.get("/transaksi", async (req, res) => {
     });
 
     const formatted = transaksi.map((trx) => ({
-      id: trx.id,
-      transactionDate: trx.invoice.transactionDate,
-      invoiceId: trx.invoiceId,
-      invoiceCode: trx.invoice.invoiceCode,
-      itemId: trx.item.kodeBarang,
-      itemName: trx.item.name,
-      quantity: trx.quantity,
-      unitPrice: trx.unitPrice,
-      subtotal: trx.subtotal,
-      partner: trx.isPurchase ? trx.vendor?.name : trx.invoice.buyer,
-      warehouse: trx.warehouse.name,
-      operator: trx.createdBy.fullName,
-      isPurchase: trx.isPurchase,
-      vendorName: trx.vendor?.name ?? null,
-      paymentMethod: trx.invoice.paymentMethod,
-      paymentStatus: trx.invoice.paymentStatus
-    }));
+  id: trx.id,
+  invoiceCode: trx.invoice.invoiceCode,
+  transactionDate: trx.invoice.transactionDate,
+  itemId: trx.item.kodeBarang,
+  itemName: trx.item.name,
+  quantity: trx.quantity,
+  unitPrice: trx.unitPrice,
+  subtotal: trx.subtotal,
+  warehouse: trx.warehouse.name,
+  warehouseId: trx.warehouse.id, // <-- tambahkan ini
+  operator: trx.createdBy.fullName,
+  isPurchase: trx.isPurchase,
+  partner: trx.isPurchase ? trx.vendor?.name : trx.invoice.buyer,
+  paymentMethod: trx.invoice.paymentMethod,
+  paymentStatus: trx.invoice.paymentStatus
+}));
+
 
     res.json(formatted);
   } catch (err) {
