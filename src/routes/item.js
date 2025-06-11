@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const prisma = require("../prisma");
 
-
 // ✅ Ambil semua item (yang belum dihapus)
 router.get("/items", async (req, res) => {
   try {
@@ -152,9 +151,6 @@ router.post("/items", async (req, res) => {
   }
 });
 
-
-
-
 // ✅ Ubah harga jual item & catat histori
 router.post("/items/:id/update-price", async (req, res) => {
   const { id } = req.params;
@@ -166,15 +162,12 @@ router.post("/items/:id/update-price", async (req, res) => {
   }
 
   try {
-    // Ambil user dari token
     const jwt = require("jsonwebtoken");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const changedById = decoded.changedById; // 🟢 benar, bukan decoded.userId
+    const changedById = decoded.userId;
 
     console.log("[DEBUG] Token:", token);
     console.log("[DEBUG] Decoded JWT:", decoded);
-
-    const userId = decoded.userId;
 
     // Update item
     const updatedItem = await prisma.item.update({
@@ -191,7 +184,6 @@ router.post("/items/:id/update-price", async (req, res) => {
       },
     });
 
-
     res.json({ message: "Harga berhasil diperbarui", item: updatedItem });
   } catch (err) {
     console.error("Gagal update harga item:", err.message);
@@ -199,7 +191,7 @@ router.post("/items/:id/update-price", async (req, res) => {
   }
 });
 
-// DELETE item by ID (soft delete)
+// ✅ Soft delete item by ID (ditempatkan terakhir)
 router.delete("/items/:id", async (req, res) => {
   const { id } = req.params;
 
