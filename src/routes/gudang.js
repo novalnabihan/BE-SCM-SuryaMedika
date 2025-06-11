@@ -43,7 +43,6 @@ router.get("/warehouses", verifyToken, async (req, res) => {
   }
 });
 
-
 // GET satu gudang berdasarkan ID
 router.get("/warehouses/:id", async (req, res) => {
   const { id } = req.params;
@@ -119,55 +118,53 @@ router.get("/warehouses/:id/summary", async (req, res) => {
 
 // ✅ GET transaksi berdasarkan warehouseId (fix field dan relasi)
 router.get("/warehouses/:id/transactions", async (req, res) => {
-  const { id } = req.params;
+  const warehouseId = req.params.id;
 
   try {
-    const transactions = await prisma.transaction.findMany({
+    const transaksi = await prisma.transaction.findMany({
       where: {
-        warehouseId: id,
+        warehouseId,
       },
       orderBy: {
-        createdAt: "desc",
+        invoice: {
+          transactionDate: "desc"
+        }
       },
       include: {
         item: true,
-        vendor: true,
-        invoice: {
-          select: {
-            transactionDate: true,
-            paymentMethod: true,
-            paymentStatus: true,
-            buyer: true,
-            createdBy: {
-              select: {
-                fullName: true,
-              },
-            },
-          },
-        },
-      },
+        warehouse: true,
+        invoice: true,
+        createdBy: true,
+        vendor: true
+      }
     });
 
-    const formatted = transactions.map((trx) => ({
+    const formatted = transaksi.map((trx) => ({
       id: trx.id,
       transactionDate: trx.invoice.transactionDate,
-      itemCode: trx.item.kodeBarang,
+      invoiceId: trx.invoiceId,
+      invoiceCode: trx.invoice.invoiceCode,
+      itemId: trx.item.kodeBarang,
       itemName: trx.item.name,
       quantity: trx.quantity,
       unitPrice: trx.unitPrice,
       subtotal: trx.subtotal,
-      isPurchase: trx.isPurchase, // Ambil langsung dari trx
+      partner: trx.isPurchase ? trx.vendor?.name : trx.invoice.buyer,
+      warehouse: trx.warehouse.name,
+      operator: trx.createdBy.fullName,
+      isPurchase: trx.isPurchase,
+      vendorName: trx.vendor?.name ?? null,
       paymentMethod: trx.invoice.paymentMethod,
-      paymentStatus: trx.invoice.paymentStatus,
-      operator: trx.invoice.createdBy.fullName,
+      paymentStatus: trx.invoice.paymentStatus
     }));
 
     res.json(formatted);
   } catch (err) {
     console.error("Gagal ambil transaksi gudang:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Terjadi kesalahan saat mengambil data transaksi gudang" });
   }
 });
+
 
 router.get("/warehouses/summary/global", async (req, res) => {
   try {
