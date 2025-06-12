@@ -143,7 +143,6 @@ router.get("/transaksi", async (req, res) => {
   paymentStatus: trx.invoice.paymentStatus
 }));
 
-
     res.json(formatted);
   } catch (err) {
     console.error("Gagal ambil transaksi:", err);

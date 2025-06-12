@@ -29,6 +29,8 @@ model User {
   invoices    Invoice[]
   transactions Transaction[]
   priceHistories ItemPriceHistory[] @relation("UserPriceChanges")
+  passwordResetTokens PasswordResetToken[]
+
 }
 
 model Warehouse {
@@ -141,6 +143,14 @@ model Vendor {
   transactions Transaction[]
 }
 
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
 
 enum Role {
   manajer
