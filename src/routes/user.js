@@ -1,23 +1,25 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const pool = require('./../db');
-const bcrypt = require('bcryptjs');
-const { v4: uuidv4 } = require('uuid');
-const now = new Date();
-const verifyToken = require('../middlewares/verifyToken');
+const bcrypt = require("bcryptjs");
+const { PrismaClient } = require("@prisma/client");
+const { v4: uuidv4 } = require("uuid");
+const verifyToken = require("../middlewares/verifyToken");
+const passwordService = require("../services/passwordService");
+const emailService = require("../services/emailService");
 
+const prisma = new PrismaClient();
 
-router.use(verifyToken);
 
 // GET semua user
-router.get('/users', async (req, res) => {
+router.get("/users", verifyToken, async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM "User" ORDER BY "createdAt" DESC');
-    res.json(result.rows);
-    console.log("User dari token:", req.user);
+    const users = await prisma.user.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    res.json(users);
   } catch (err) {
-    console.error('Error fetching users:', err);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -26,62 +28,76 @@ router.post('/users', async (req, res) => {
   const { username, email, password, role, fullName, phone } = req.body;
 
   if (!username || !email || !role || !password || !fullName || !phone) {
-    return res.status(400).json({ message: "Semua field wajib diisi!" });
+    return res.status(400).json({ message: 'Semua field wajib diisi!' });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const id = uuidv4();
-    const result = await pool.query(
-      `INSERT INTO "User" (id, username, email, password, role, "fullName", phone, "createdAt", "updatedAt")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-      [id, username, email, hashedPassword, role, fullName, phone, now, now]
-    );
-    res.status(201).json(result.rows[0]);
+    const newUser = await prisma.user.create({
+      data: {
+        id: uuidv4(),
+        username,
+        email,
+        password: hashedPassword,
+        role,
+        fullName,
+        phone,
+      },
+    });
+
+    // 🟡 Tambahkan di sini: generate token untuk reset password
+    const token = await passwordService.generateResetToken(newUser.id);
+
+    // 🟢 Lalu kirim email ke user
+    await emailService.sendResetPasswordEmail(newUser.email, token);
+
+    res.status(201).json(newUser);
   } catch (err) {
-    console.error('Gagal menambahkan user:', err.message, err.stack);
+    console.error('Gagal menambahkan user:', err);
     res.status(500).json({ message: 'Server error' });
   }
 });
 
 
-router.put('/users/:id', async (req, res) => {
+// PUT update user
+router.put("/users/:id", async (req, res) => {
   const { username, email, role } = req.body;
   const id = req.params.id;
-  const now = new Date();
 
   try {
-    const result = await pool.query(
-      `UPDATE "User"
-       SET username = $1,
-           email = $2,
-           role = $3,
-           "updatedAt" = $4
-       WHERE id = $5
-       RETURNING *`,
-      [username, email, role, now, id]
-    );
-    res.json(result.rows[0]);
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: {
+        username,
+        email,
+        role,
+        updatedAt: new Date(),
+      },
+    });
+
+    res.json(updatedUser);
   } catch (err) {
-    console.error('Gagal update user:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Gagal update user:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
-
-router.delete('/users/:id', async (req, res) => {
+// DELETE soft delete user
+router.delete("/users/:id", verifyToken, async (req, res) => {
   const id = req.params.id;
-  const now = new Date()
 
   try {
-    await pool.query(`UPDATE "User" SET "deletedAt" = $1 WHERE id = $2`, [now, id]);
-    res.status(204).send(); // sukses tanpa isi
+    await prisma.user.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+    });
+    res.status(204).send();
   } catch (err) {
-    console.error('Gagal hapus user:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Gagal hapus user:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
-
-
 
 module.exports = router;
