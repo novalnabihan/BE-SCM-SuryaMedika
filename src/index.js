@@ -25,6 +25,13 @@ app.use('/api', itemRoutes);
 const invoicesRoutes = require('./routes/invoice');
 app.use('/api', invoicesRoutes)
 
+const passwordRoutes = require('./routes/password');
+app.use('/api/password', passwordRoutes);
+
+const resetRoutes = require('./routes/reset');
+app.use('/api/reset', resetRoutes);
+
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
