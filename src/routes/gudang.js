@@ -4,6 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const { v4: uuidv4 } = require("uuid");
 const verifyToken = require("../middlewares/verifyToken");
+const Papa = require("papaparse"); // Pastikan ini diimport jika belum ada
 
 // GET semua gudang (dengan pencarian opsional dan total stok)
 router.get("/warehouses", verifyToken, async (req, res) => {
@@ -72,7 +73,7 @@ router.get("/warehouses/:id", async (req, res) => {
   }
 });
 
-// GET ringkasan total stok, modal, dan value gudang
+// GET ringkasan total stok, modal, dan value gudang - Dari kode teman
 router.get("/warehouses/:id/summary", async (req, res) => {
   const { id } = req.params;
 
@@ -95,7 +96,6 @@ router.get("/warehouses/:id/summary", async (req, res) => {
       totalValue += stock.stockQty * stock.item.currentPrice;
     }
 
-    // Hitung total modal dari transaksi pembelian
     const pembelian = await prisma.transaction.findMany({
       where: {
         warehouseId: id,
@@ -119,12 +119,27 @@ router.get("/warehouses/:id/summary", async (req, res) => {
 // ✅ GET transaksi berdasarkan warehouseId (fix field dan relasi)
 router.get("/warehouses/:id/transactions", async (req, res) => {
   const warehouseId = req.params.id;
+  const q = req.query.q?.toLowerCase() || ""; // Ambil query parameter 'q'
 
   try {
+    const whereClause = {
+      warehouseId,
+    };
+
+    if (q) {
+      whereClause.OR = [
+        { invoice: { invoiceCode: { contains: q, mode: "insensitive" } } },
+        { item: { kodeBarang: { contains: q, mode: "insensitive" } } },
+        { item: { name: { contains: q, mode: "insensitive" } } },
+        { createdBy: { fullName: { contains: q, mode: "insensitive" } } },
+        { vendor: { name: { contains: q, mode: "insensitive" } } },
+        { invoice: { buyer: { contains: q, mode: "insensitive" } } },
+        { invoice: { paymentMethod: { contains: q, mode: "insensitive" } } },
+      ];
+    }
+
     const transaksi = await prisma.transaction.findMany({
-      where: {
-        warehouseId,
-      },
+      where: whereClause,
       orderBy: {
         invoice: {
           transactionDate: "desc"
@@ -200,6 +215,7 @@ router.get("/warehouses/summary/global", async (req, res) => {
   }
 });
 
+// GET summary per warehouse 
 router.get(
   "/warehouses/summary/per-warehouse",
   verifyToken,
@@ -309,6 +325,72 @@ router.put("/warehouses/:id", verifyToken, async (req, res) => {
   } catch (err) {
     console.error("Gagal update gudang:", err.message);
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST export CSV filtered warehouses - Dari kode Anda yang sudah ada
+router.post("/warehouses/export-csv/filtered", verifyToken, async (req, res) => {
+  const { filters } = req.body;
+
+  if (!filters) {
+    return res.status(400).json({ message: "Filter tidak disertakan." });
+  }
+
+  try {
+    const whereClause = {};
+    if (filters.itemId || filters.itemName) {
+      whereClause.item = {};
+      if (filters.itemId) whereClause.item.kodeBarang = filters.itemId;
+      if (filters.itemName) whereClause.item.name = filters.itemName;
+    }
+    if (filters.invoiceCode || filters.paymentStatus) {
+      whereClause.invoice = {};
+      if (filters.invoiceCode) whereClause.invoice.invoiceCode = filters.invoiceCode;
+      if (filters.paymentStatus) whereClause.invoice.paymentStatus = filters.paymentStatus === 'true';
+    }
+    if (filters.operator) whereClause.createdBy = { fullName: filters.operator };
+    if (filters.partner) whereClause.vendor = { name: filters.partner };
+    if (filters.status) whereClause.isPurchase = filters.status === 'purchase';
+
+    const transaksi = await prisma.transaction.findMany({
+      where: whereClause,
+      orderBy: { invoice: { transactionDate: "desc" } },
+      include: {
+        item: true,
+        warehouse: true,
+        invoice: true,
+        createdBy: true,
+        vendor: true,
+      },
+    });
+
+    const formattedData = transaksi.map((trx) => ({
+        "Kode Invoice": trx.invoice?.invoiceCode ?? 'N/A',
+        "Tanggal": trx.invoice?.transactionDate ? new Date(trx.invoice.transactionDate).toLocaleDateString("id-ID") : 'N/A',
+        "Kode Barang": trx.item?.kodeBarang ?? 'N/A',
+        "Nama Barang": trx.item?.name ?? 'N/A',
+        "Jumlah": trx.quantity,
+        "Harga Satuan": trx.unitPrice,
+        "Subtotal": trx.subtotal,
+        "Operator": trx.createdBy?.fullName ?? 'N/A',
+        "Status": trx.isPurchase ? "Pembelian" : "Penjualan",
+        "Partner": trx.isPurchase ? (trx.vendor?.name ?? 'N/A') : (trx.invoice?.buyer ?? 'N/A'),
+        "Metode Pembayaran": trx.invoice?.paymentMethod ?? 'N/A',
+        "Status Pembayaran": trx.invoice ? (trx.invoice.paymentStatus ? "Lunas" : "Belum Lunas") : 'N/A',
+    }));
+
+    if (formattedData.length === 0) {
+        return res.status(404).json({ message: "Tidak ada data yang cocok dengan filter yang diberikan." });
+    }
+
+    const csv = Papa.unparse(formattedData);
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename=export-terfilter.csv`);
+    res.status(200).send(csv);
+
+  } catch (err) {
+    console.error("❌ Gagal export CSV dengan filter:", err);
+    res.status(500).json({ message: "Gagal membuat file CSV." });
   }
 });
 

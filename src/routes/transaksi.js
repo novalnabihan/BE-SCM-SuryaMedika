@@ -8,7 +8,7 @@ const { PrismaClient } = require('@prisma/client');
 const { format, getYear } = require('date-fns');
 const { id } = require('date-fns/locale');
 const verifyToken = require('../middlewares/verifyToken');
-
+const Papa = require('papaparse'); // Pastikan ini diimport
 
 const generateInvoiceCode = () => `INV-${ulid().slice(0,8)}`;
 
@@ -113,8 +113,26 @@ router.post("/transaksi", async (req, res) => {
 
 // ✅ GET /transaksi
 router.get("/transaksi", async (req, res) => {
+  const q = req.query.q?.toLowerCase() || "";
+
   try {
+    const whereClause = {};
+
+    if (q) {
+      whereClause.OR = [
+        { invoice: { invoiceCode: { contains: q, mode: "insensitive" } } },
+        { item: { kodeBarang: { contains: q, mode: "insensitive" } } },
+        { item: { name: { contains: q, mode: "insensitive" } } },
+        { warehouse: { name: { contains: q, mode: "insensitive" } } },
+        { createdBy: { fullName: { contains: q, mode: "insensitive" } } },
+        { vendor: { name: { contains: q, mode: "insensitive" } } },
+        { invoice: { buyer: { contains: q, mode: "insensitive" } } },
+        { invoice: { paymentMethod: { contains: q, mode: "insensitive" } } },
+      ];
+    }
+
     const transaksi = await prisma.transaction.findMany({
+      where: whereClause,
       orderBy: { createdAt: "desc" },
       include: {
         item: true,
@@ -376,6 +394,80 @@ router.put("/transaksi/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.post("/transaksi/export", verifyToken, async (req, res) => {
+  const { filters } = req.body;
+
+  if (!filters) {
+    return res.status(400).json({ message: "Filter tidak disertakan." });
+  }
+
+  try {
+    const where = {};
+
+    if (filters.invoiceCode) {
+      where.invoice = { ...where.invoice, invoiceCode: { contains: filters.invoiceCode, mode: 'insensitive' } };
+    }
+    if (filters.itemName) {
+      where.item = { ...where.item, name: { contains: filters.itemName, mode: 'insensitive' } };
+    }
+    if (filters.operator) {
+      where.createdBy = { fullName: { contains: filters.operator, mode: 'insensitive' } };
+    }
+    if (filters.partner) {
+      where.OR = [
+        { vendor: { name: { contains: filters.partner, mode: 'insensitive' } } },
+        { invoice: { buyer: { contains: filters.partner, mode: 'insensitive' } } }
+      ];
+    }
+    if (filters.status) {
+      where.isPurchase = filters.status === 'purchase';
+    }
+    if (filters.paymentStatus) {
+      where.invoice = { ...where.invoice, paymentStatus: filters.paymentStatus === 'true' };
+    }
+
+    const transaksi = await prisma.transaction.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        item: true,
+        warehouse: true,
+        invoice: true,
+        createdBy: true,
+        vendor: true,
+      },
+    });
+
+    const formatted = transaksi.map((trx) => ({
+        "Kode Invoice": trx.invoice?.invoiceCode ?? 'N/A',
+        "Tanggal": trx.invoice?.transactionDate ? new Date(trx.invoice.transactionDate).toLocaleDateString("id-ID") : 'N/A',
+        "Kode Barang": trx.item?.kodeBarang ?? 'N/A',
+        "Nama Barang": trx.item?.name ?? 'N/A',
+        "Jumlah": trx.quantity,
+        "Harga Satuan": trx.unitPrice,
+        "Subtotal": trx.subtotal,
+        "Gudang": trx.warehouse?.name ?? 'N/A',
+        "Operator": trx.createdBy?.fullName ?? 'N/A',
+        "Status": trx.isPurchase ? "Pembelian" : "Penjualan",
+        "Partner": trx.isPurchase ? (trx.vendor?.name ?? 'N/A') : (trx.invoice?.buyer ?? 'N/A'),
+        "Metode Pembayaran": trx.invoice?.paymentMethod ?? 'N/A',
+        "Status Pembayaran": trx.invoice ? (trx.invoice.paymentStatus ? "Lunas" : "Belum Lunas") : 'N/A',
+    }));
+
+    if (formatted.length === 0) {
+      return res.status(404).json({ message: "Tidak ada data transaksi yang cocok dengan filter." });
+    }
+
+    const csv = Papa.unparse(formatted);
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename=export-transaksi-${new Date().toISOString().split('T')[0]}.csv`);
+    res.status(200).send(csv);
+
+  } catch (err) {
+    console.error("❌ Gagal export data transaksi:", err);
+    res.status(500).json({ message: "Gagal membuat file CSV transaksi." });
+  }
+});
 
 
 module.exports = router;

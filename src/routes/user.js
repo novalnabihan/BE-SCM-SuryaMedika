@@ -6,21 +6,35 @@ const { v4: uuidv4 } = require("uuid");
 const verifyToken = require("../middlewares/verifyToken");
 const passwordService = require("../services/passwordService");
 const emailService = require("../services/emailService");
+const Papa = require("papaparse"); // Pastikan ini diimport
 
 const prisma = new PrismaClient();
 
 
 // GET semua user
 router.get("/users", verifyToken, async (req, res) => {
-  try {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
-    });
-    res.json(users);
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ message: "Internal server error" });
-  }
+    const q = req.query.q?.toLowerCase() || ""; 
+
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                ...(q && { 
+                    OR: [
+                        { fullName: { contains: q, mode: "insensitive" } },
+                        { username: { contains: q, mode: "insensitive" } },
+                        { email: { contains: q, mode: "insensitive" } },
+                        { phone: { contains: q, mode: "insensitive" } },
+                    ],
+                }),
+                deletedAt: null // Ini penting jika Anda menerapkan soft delete
+            },
+            orderBy: { createdAt: "desc" },
+        });
+        res.json(users);
+    } catch (err) {
+        console.error("Error fetching users:", err);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 // POST user baru
@@ -98,6 +112,74 @@ router.delete("/users/:id", verifyToken, async (req, res) => {
     console.error("Gagal hapus user:", err);
     res.status(500).json({ message: "Server error" });
   }
+});
+
+// POST export filtered users (Sudah ada di kode Anda, tetap ada)
+router.post('/users/export', verifyToken, async (req, res) => {
+    const { filters } = req.body;
+
+    if (!filters) {
+        return res.status(400).json({ message: "Filter tidak disertakan." });
+    }
+
+    try {
+        const whereClause = {
+            deletedAt: null, // Hanya ekspor user yang belum dihapus
+        };
+
+        if (filters.fullName) {
+            whereClause.fullName = { contains: filters.fullName, mode: 'insensitive' };
+        }
+        if (filters.username) {
+            whereClause.username = { contains: filters.username, mode: 'insensitive' };
+        }
+        if (filters.email) {
+            whereClause.email = { contains: filters.email, mode: 'insensitive' };
+        }
+        if (filters.phone) {
+            whereClause.phone = { contains: filters.phone, mode: 'insensitive' };
+        }
+        if (filters.role) {
+            whereClause.role = filters.role;
+        }
+
+        const users = await prisma.user.findMany({
+            where: whereClause,
+            orderBy: { createdAt: "desc" },
+            select: {
+                fullName: true,
+                username: true,
+                phone: true,
+                email: true,
+                role: true,
+                createdAt: true,
+                updatedAt: true,
+            },
+        });
+
+        const formattedData = users.map(user => ({
+            "Nama Lengkap": user.fullName,
+            "Username": user.username,
+            "Telepon": user.phone,
+            "Email": user.email,
+            "Role": user.role,
+            "Tanggal Daftar": user.createdAt ? new Date(user.createdAt).toLocaleDateString("id-ID") : 'N/A',
+            "Tanggal Perbarui": user.updatedAt ? new Date(user.updatedAt).toLocaleDateString("id-ID") : 'N/A',
+        }));
+
+        if (formattedData.length === 0) {
+            return res.status(404).json({ message: "Tidak ada data karyawan yang cocok dengan filter." });
+        }
+
+        const csv = Papa.unparse(formattedData);
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Disposition", `attachment; filename=export-karyawan-${new Date().toISOString().split('T')[0]}.csv`);
+        res.status(200).send(csv);
+
+    } catch (err) {
+        console.error('❌ Gagal export data karyawan:', err);
+        res.status(500).json({ message: 'Gagal membuat file CSV karyawan.' });
+    }
 });
 
 module.exports = router;
