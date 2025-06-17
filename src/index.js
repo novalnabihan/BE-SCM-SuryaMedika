@@ -12,6 +12,11 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
+app.use((req, res, next) => {
+  console.log("🛰 Incoming request from:", req.headers.origin);
+  next();
+});
+
 app.use(cors(corsOptions));
 
 app.use(express.json());
