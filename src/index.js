@@ -6,10 +6,12 @@ const app = express();
 
 const corsOptions = {
   origin: [
-    "https://scm-surya-medika.vercel.app", // FE kamu di Vercel
+    'http://localhost:3000', // untuk lokal dev
+    'https://scm-surya-medika.vercel.app', // domain Vercel frontend
   ],
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true, // penting jika kamu pakai cookie/token
 };
 
 app.use(cors(corsOptions));
