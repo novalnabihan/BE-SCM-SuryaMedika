@@ -1,10 +1,8 @@
 // routes/invoice.js
 const express = require("express");
 const router = express.Router();
-const { PrismaClient } = require("@prisma/client");
 const { transaction } = require("../prisma");
-const prisma = new PrismaClient();
-
+const prisma = require('../prisma');
 
 router.get("/invoices", async (req, res) => {
   try {

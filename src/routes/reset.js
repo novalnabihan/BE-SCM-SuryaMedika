@@ -2,9 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const passwordService = require('../services/passwordService');
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
-
+const prisma = require('../prisma');
 
 router.post('/request-reset', async (req, res) => {
   const { email } = req.body;

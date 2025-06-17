@@ -1,9 +1,8 @@
 // src/services/passwordService.js
 
-const { PrismaClient } = require('@prisma/client');
-const { v4: uuidv4 } = require('uuid');
 
-const prisma = new PrismaClient();
+const { v4: uuidv4 } = require('uuid');
+const prisma = require('../prisma');
 
 const TOKEN_EXPIRATION_MINUTES = 60; // Token berlaku 60 menit
 

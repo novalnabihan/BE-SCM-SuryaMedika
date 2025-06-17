@@ -3,12 +3,9 @@ const express = require('express');
 const router = express.Router();
 const { generateResetToken, validateResetToken, deleteResetToken } = require('../services/passwordService');
 const { sendResetEmail } = require('../services/emailService');
-const { PrismaClient } = require('@prisma/client');
+const prisma = require('../prisma');
 const bcrypt = require('bcryptjs');
 
-
-
-const prisma = new PrismaClient();
 
 // Trigger email reset saat user baru dibuat
 router.post('/send-reset/:userId', async (req, res) => {

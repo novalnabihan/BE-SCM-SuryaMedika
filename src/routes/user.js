@@ -1,15 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
-const { PrismaClient } = require("@prisma/client");
 const { v4: uuidv4 } = require("uuid");
 const verifyToken = require("../middlewares/verifyToken");
 const passwordService = require("../services/passwordService");
 const emailService = require("../services/emailService");
-const Papa = require("papaparse"); // Pastikan ini diimport
+const Papa = require("papaparse"); 
 
-const prisma = new PrismaClient();
-
+const prisma = require('../prisma');
 
 // GET semua user
 router.get("/users", verifyToken, async (req, res) => {
@@ -41,29 +39,19 @@ router.get("/users", verifyToken, async (req, res) => {
 router.post('/users', async (req, res) => {
   const { username, email, password, role, fullName, phone } = req.body;
 
-  if (!username || !email || !role || !password || !fullName || !phone) {
-    return res.status(400).json({ message: 'Semua field wajib diisi!' });
-  }
-
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await prisma.user.create({
-      data: {
-        id: uuidv4(),
-        username,
-        email,
-        password: hashedPassword,
-        role,
-        fullName,
-        phone,
-      },
+      data: { id: uuidv4(), username, email, password: hashedPassword, role, fullName, phone },
     });
 
-    // 🟡 Tambahkan di sini: generate token untuk reset password
-    const token = await passwordService.generateResetToken(newUser.id);
-
-    // 🟢 Lalu kirim email ke user
-    await emailService.sendResetPasswordEmail(newUser.email, token);
+    // Coba isolasi masalah:
+    try {
+      const token = await passwordService.generateResetToken(newUser.id);
+      await emailService.sendResetPasswordEmail(newUser.email, token);
+    } catch (err) {
+      console.error('❗ Error saat kirim email:', err.message);
+    }
 
     res.status(201).json(newUser);
   } catch (err) {

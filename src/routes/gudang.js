@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const prisma = require('../prisma');
 const { v4: uuidv4 } = require("uuid");
 const verifyToken = require("../middlewares/verifyToken");
 const Papa = require("papaparse"); // Pastikan ini diimport jika belum ada
