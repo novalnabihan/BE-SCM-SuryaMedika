@@ -22,7 +22,7 @@ router.get("/invoices", async (req, res) => {
     const formatted = invoices.map((inv) => {
       const totalItems = inv.transactions.length;
       const totalAmount = inv.transactions.reduce((acc, trx) => acc + trx.subtotal, 0);
-      const isPurchase = inv.transactions[0]?.isPurchase ?? true;
+      const isPurchase = inv.transactions.length > 0 ? inv.transactions[0].isPurchase : true;
 
       return {
         id: inv.id,
